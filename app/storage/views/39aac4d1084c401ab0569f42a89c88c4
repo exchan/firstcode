@@ -1,0 +1,25 @@
+	<div class="container">
+		<?php if(!empty($news)): ?>
+		<div id="news">
+		  <h3><?php echo e(trans('texts.lastest_news')); ?></h3>
+		  <p><a href="<?=url('/page/all-news')?>">+ Show all news<i class="icon-arrow-right-5"></i></a></p>
+		    <table class="table noborder">
+		    	<?php foreach($news as $new): ?>
+		    	<tr>
+					<td><?php echo date('Y-m-d',strtotime($new->created_at)); ?></td>
+					<td><?php echo HTML::link('/post/'.$new->permalink, $new->title); ?></td>
+				</tr>
+				<?php endforeach; ?>
+		    </table>
+		</div>
+		<?php endif; ?>
+</div>
+<?php $__env->startSection('script.footer'); ?>
+@parent
+<script>
+jQuery( document ).ready(function($) {
+    $("#news_twitter_feed").find('.timeline-header.customisable-border').css('background-color','#00a651');
+    $("#news_twitter_feed").find('.timeline-header .summary a').css('color','#fff');
+});
+</script>
+<?php $__env->stopSection(); ?>

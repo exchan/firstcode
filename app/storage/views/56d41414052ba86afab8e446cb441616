@@ -1,0 +1,22 @@
+<?php echo (Confide::checkAction('HomeController@index')); ?>
+
+<ul class="market" id="ticker">
+<?php foreach($btc_markets as $btc_market): ?>
+<?php
+  $total_btc = isset($btc_datainfo[$btc_market->id]['total'])? $btc_datainfo[$btc_market->id]['total']:0;
+  $curr_price = isset($btc_datainfo[$btc_market->id][0]['price'])? $btc_datainfo[$btc_market->id][0]['price']:0;
+  $pre_price = isset($btc_datainfo[$btc_market->id][1]['price'])? $btc_datainfo[$btc_market->id][1]['price']:0;
+  $change = ($pre_price!=0)? sprintf('%.2f',(($curr_price-$pre_price)/$pre_price)*100):100;
+  //echo "Cur: ".$curr_price." -- Pre: ".$pre_price;
+  //if($change>0) $change = '+'.$change;
+?>
+<li><span><a href="<?php echo e(URL::to('/market/')); ?>/<?php echo $btc_market->id; ?>"><span class="name"><?php echo $btc_market->type; ?></span>
+  <span class="price" yesterdayPrice="<?php echo sprintf('%.8f',$pre_price); ?>" id="spanPrice-<?php echo $btc_market->id; ?>"><?php echo sprintf('%.8f',$curr_price); ?></span>
+  <?php if($change>=0): ?>
+  <span class="change up" id="spanChange-<?php echo $btc_market->id; ?>">+<?php echo $change; ?>%</span>
+  <?php else: ?>
+  <span class="change down" id="spanChange-<?php echo $btc_market->id; ?>"><?php echo $change; ?>%</span>
+  <?php endif; ?></a>
+  </span></li>
+<?php endforeach; ?>
+</ul>

@@ -1,0 +1,92 @@
+<?php $__env->startSection('title'); ?>
+<?php echo Lang::get('frontend_texts.forgetpass'); ?>
+
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('body'); ?>
+<div class="container">
+    <div class="content">
+    <script type="text/javascript">
+     var RecaptchaOptions = {
+        theme : 'clean'
+     };
+     </script>
+        <div id="forgetpass" class="formuser">
+            <h2><?php echo Lang::get('frontend_texts.forgetpass'); ?></h2>
+            <hr><div class="rowform m-auto text-center">
+            <?php if( Session::get('error') ): ?>
+            <div class="alert alert-danger" role="alert"><?php echo e(Session::get('error')); ?></div>
+            <?php endif; ?>
+
+            <?php if( Session::get('notice') ): ?>
+            <div class="alert alert-success" role="alert"><?php echo e(Session::get('notice')); ?></div>
+            <?php endif; ?>
+            <form method="POST" id="forgotForm" action="<?php echo (Confide::checkAction('UserController@do_forgot_password')) ?: URL::to('/user/forgot'); ?>" accept-charset="UTF-8">
+            <input type="hidden" name="_token" value="<?php echo e(Session::getToken()); ?>">
+            <div class="form-group text">
+              <input class="form-control" placeholder="<?php echo e(Lang::get('confide::confide.e_mail')); ?>" type="text" name="email" id="email" value="<?php echo e(Input::old('email')); ?>">
+            </div>
+            <p><div class="control-group">
+              <script type="text/javascript" src="https://www.google.com/recaptcha/api/challenge?k=<?php echo $recaptcha_publickey; ?>"></script>
+              <script type="text/javascript" src="https://www.google.com/recaptcha/api/js/recaptcha.js"></script>
+              <noscript>
+              &lt;iframe src="https://www.google.com/recaptcha/api/noscript?k=<?php echo $recaptcha_publickey; ?>" height="300" width="300" frameborder="0"&gt;&lt;/iframe&gt;&lt;br/&gt;
+              &lt;textarea name="recaptcha_challenge_field" rows="3" cols="40"&gt;&lt;/textarea&gt;
+              &lt;input type="hidden" name="recaptcha_response_field" value="manual_challenge"/&gt;
+              </noscript>
+              <div id="captchaStatus"></div>
+            </div>
+            </p>
+            <button class="btn btn-lg btn-block btn-primary" type="submit" value=""><?php echo e(Lang::get('confide::confide.forgot.submit')); ?></button>
+        </form>
+        </div>
+    </div>
+</div></div>
+<!-- End Reset password -->
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('script.footer'); ?>
+@parent
+<?php echo HTML::script('assets/js/jquery.validate.min.js'); ?>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#forgotForm").validate({
+            rules: {
+                firstname: "required",
+                lastname: "required",
+                email: {
+                    required: true,
+                    email: true
+                },
+                termsofservice: "required"
+            },
+            messages: {
+                firstname: "Please enter your first name.",
+                lastname: "Please enter your last name.",
+                email: "Please enter a valid email address.",
+                termsofservice: "Please accept our TOS."
+            },
+            submitHandler: function(form) {
+              var challengeField = $("input#recaptcha_challenge_field").val();
+            var responseField = $("input#recaptcha_response_field").val();
+            console.log('responseField',responseField);
+            $.post('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
+                if(response == 1)
+                {
+                  $('button[type=submit]').hide();
+                    document.getElementById("forgotForm").submit();
+                    //return true;
+                }
+                else
+                {
+                    $("#captchaStatus").html("<label class='error'>Your captcha is incorrect. Please try again</label>");
+                    Recaptcha.reload();
+                    //return false;
+                }
+            });
+          }
+      });
+  });
+</script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

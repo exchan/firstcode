@@ -1,0 +1,33 @@
+<?php $__env->startSection('title'); ?>
+<?php echo Lang::get('frontend_texts.reset_pass'); ?>
+
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('body'); ?>
+<div class="container">
+    <div class="content">
+      <div id="resetpassfrom" class="formuser">
+        <h2><?php echo Lang::get('frontend_texts.reset_pass'); ?></h2>
+        <hr>
+        <?php if( Session::get('error') ): ?>
+            <div class="notice marker-on-bottom bg-darkRed fg-white"><?php echo e(Session::get('error')); ?></div>
+        <?php endif; ?>
+
+        <?php if( Session::get('notice') ): ?>
+            <div class="notice marker-on-bottom fg-white"><?php echo e(Session::get('notice')); ?></div>
+        <?php endif; ?>
+        <form method="POST" action="<?php echo e((Confide::checkAction('UserController@do_reset_password'))    ?: URL::to('/user/reset')); ?>" accept-charset="UTF-8" class="reset_pas">
+          <input type="hidden" name="token" value="<?php echo e($token); ?>">
+          <input type="hidden" name="_token" value="<?php echo e(Session::getToken()); ?>">
+          <div class="form-group text">
+              <input class="form-control" type="password" name="password" id="password" value="<?php echo e(Input::old('email')); ?>" placeholder="<?php echo e(Lang::get('confide::confide.password')); ?>"/>
+              <br>
+              <input class="form-control" placeholder="<?php echo e(Lang::get('confide::confide.password_confirmation')); ?>" type="password" name="password_confirmation" id="password_confirmation">
+          </div>
+          <button tabindex="3" type="submit" class="btn btn-lg btn-primary"><?php echo e(Lang::get('confide::confide.forgot.submit')); ?></button>
+      </form>
+      </div>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
